@@ -11,6 +11,8 @@ def scrape_paso(url, timestamp):
 
     if soup.find("div", class_="alert alert-block alert-dismissible alert-danger messages error"):
         print("Servicio de pasos fronterizos momentáneamente no disponbile.")
+        print(url)
+        print(soup.find("div", class_="alert alert-block alert-dismissible alert-danger messages error").text)
         raise AirflowSkipException
 
     paso_info = {}
