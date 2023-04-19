@@ -9,6 +9,9 @@ def scrape_paso(url, timestamp):
 
     paso_info = {}
 
+    paso_nombre = soup.find("h2").get_text("|",strip=True).split("|")[0].strip()
+    paso_info['paso'] = paso_nombre
+    
     estado_y_actualizacion = soup.find("div", class_="text-muted m-t-3 lead")
     actualizacion = estado_y_actualizacion.get_text("|", strip=True).split("|")[1]
     
@@ -50,3 +53,7 @@ def scrape_paso(url, timestamp):
         paso_info[key] = info_cruce_dict.get(key, None)
 
     return paso_info
+
+if __name__ == "__main__":
+    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/42/Cardenal-Antonio-Samor%C3%A9", datetime.now()))
+    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/82/Puerto-Colon-Puerto-Paysandu", datetime.now()))
