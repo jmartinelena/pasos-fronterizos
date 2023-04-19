@@ -29,6 +29,8 @@ with DAG(
                 provincia VARCHAR(20) NOT NULL,
                 estado VARCHAR(20) NOT NULL,
                 tipo VARCHAR(20) NOT NULL,
+                fecha_scaneo DATETIME NOT NULL,
+                ultima_actualizacion DATETIME NOT NULL,
                 temperatura INT,
                 tiempo VARCHAR(100),
                 viento VARCHAR(100),
