@@ -21,4 +21,11 @@ def scrape_paso(url, timestamp):
     paso_info['estado'] = estado_y_actualizacion.find("span").text
     paso_info['ultima_actualizacion'] = (timestamp - timedelta(days=dias, hours=horas, minutes=minutos, seconds=segundos)).strftime("%Y-%m-%d %H:%M:%S")
 
+    media_bodies = soup.find_all("div", class_="media-body")
+    
+    info_general = media_bodies[0]
+    info_general_ps = info_general.find_all("p")
+    paso_info['pais'] = info_general_ps[0].get_text("|", strip=True).split("|")[1]
+    paso_info['provincia'] = info_general_ps[1].get_text("|", strip=True).split("|")[1]
+
     return paso_info
