@@ -49,9 +49,6 @@ def scrape_paso(url, timestamp):
         value = p.get_text("|", strip=True).split("|")[1]
         
         if value[:-2].replace('.','').isdigit():
-            try:
-                value = int(value[:-2])
-            except:
                 value = float(value[:-2])
         
         info_cruce_dict[key] = value
