@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import re
 
 def scrape_paso(url, timestamp):
     req = requests.get(url)
@@ -27,5 +28,7 @@ def scrape_paso(url, timestamp):
     info_general_ps = info_general.find_all("p")
     paso_info['pais'] = info_general_ps[0].get_text("|", strip=True).split("|")[1]
     paso_info['provincia'] = info_general_ps[1].get_text("|", strip=True).split("|")[1]
+
+    info_cruce = media_bodies[2]
 
     return paso_info
