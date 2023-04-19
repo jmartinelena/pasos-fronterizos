@@ -30,5 +30,23 @@ def scrape_paso(url, timestamp):
     paso_info['provincia'] = info_general_ps[1].get_text("|", strip=True).split("|")[1]
 
     info_cruce = media_bodies[2]
+    info_cruce_ps = info_cruce.find_all("p")
+    
+    info_cruce_dict = {}
+
+    for p in info_cruce_ps:
+        key = p.get_text("|", strip=True).split("|")[0][:-1]
+        key = key.lower().replace(" ","_")
+        value = p.get_text("|", strip=True).split("|")[1]
+        
+        if value[:-2].isdigit():
+            value = int(value[:-2])
+        
+        info_cruce_dict[key] = value
+
+    keys = ['tipo_de_paso', 'temperatura', 'tiempo', 'viento', 'visibilidad', 'altura_del_río', 'alerta', 'evacuación']
+
+    for key in keys:
+        paso_info[key] = info_cruce_dict.get(key, None)
 
     return paso_info
