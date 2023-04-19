@@ -20,4 +20,8 @@ docs_build
 venv
 docs.zip
 archive.zip
+
 pruebas.ipynb
+mysql/*
+logs/*
+plugins/*
