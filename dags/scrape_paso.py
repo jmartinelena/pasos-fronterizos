@@ -2,10 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
+from airflow.exceptions import AirflowSkipException
 
 def scrape_paso(url, timestamp):
+    timestamp = datetime.fromisoformat(timestamp)
     req = requests.get(url)
     soup = BeautifulSoup(req.text, "html.parser")
+
+    if soup.find("div", class_="alert alert-block alert-dismissible alert-danger messages error"):
+        print("Servicio de pasos fronterizos momentáneamente no disponbile.")
+        raise AirflowSkipException
 
     paso_info = {}
 
@@ -15,7 +21,7 @@ def scrape_paso(url, timestamp):
     estado_y_actualizacion = soup.find("div", class_="text-muted m-t-3 lead")
     actualizacion = estado_y_actualizacion.get_text("|", strip=True).split("|")[1]
     
-    dias, horas, minutos, segundos = re.search(r"(?:(\d+)\s*(?:dia)s?)?\s(?:(\d+)\s*(?:hora)s?)?\s(?:(\d+)\s*(?:minuto)s?)?\s(?:(\d+)\s*(?:segundos)s?)", actualizacion).groups()
+    dias, horas, minutos, segundos = re.search(r"(?:(\d+)\s*(?:dia)s?)?\s(?:(\d+)\s*(?:hora)s?)?\s*(?:(\d+)\s*(?:minuto)s?)?\s*(?:(\d+)\s*(?:segundos)s?)", actualizacion).groups()
     
     dias = int(dias) if dias is not None else 0
     horas = int(horas) if horas is not None else 0
@@ -42,8 +48,11 @@ def scrape_paso(url, timestamp):
         key = key.lower().replace(" ","_")
         value = p.get_text("|", strip=True).split("|")[1]
         
-        if value[:-2].isdigit():
-            value = int(value[:-2])
+        if value[:-2].replace('.','').isdigit():
+            try:
+                value = int(value[:-2])
+            except:
+                value = float(value[:-2])
         
         info_cruce_dict[key] = value
 
@@ -55,5 +64,5 @@ def scrape_paso(url, timestamp):
     return paso_info
 
 if __name__ == "__main__":
-    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/42/Cardenal-Antonio-Samor%C3%A9", datetime.now()))
-    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/82/Puerto-Colon-Puerto-Paysandu", datetime.now()))
+    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/17/Puerto-Alvear-Puerto-Itaqui", datetime.now().isoformat()))
+    print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor", datetime.now().isoformat()))
