@@ -4,8 +4,8 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.mysql.operators.mysql import MySqlOperator
 
-
 from scrape_paso import scrape_paso
+from cargar_paso import cargar_paso
 
 default_args = {
     'owner': 'Juan Martin Elena',
@@ -60,14 +60,15 @@ with DAG(
     timestamp = "{{ ts }}"
     for i in range(len(urls)):
         scrapear_paso = PythonOperator(
-        task_id=f"scrapeo_paso_{i}",
-        python_callable= scrape_paso,
-        op_args=(urls[i], timestamp),
+            task_id=f"scrapeo_paso_{i}",
+            python_callable= scrape_paso,
+            op_args=(urls[i], timestamp),
         )
 
-        xcoms_paso = PythonOperator(
-            task_id = f"xcoms_{i}",
-            python_callable= lambda ti: print(ti.xcom_pull(task_ids=f'scrapeo_paso_{i}')) 
+        carga_paso = PythonOperator(
+            task_id = f"cargar_paso_{i}",
+            python_callable=cargar_paso,
+            op_args=[f"scrapeo_paso_{i}"]
         )
 
-        creacion_tabla >> scrapear_paso >> xcoms_paso
+        creacion_tabla >> scrapear_paso >> carga_paso
