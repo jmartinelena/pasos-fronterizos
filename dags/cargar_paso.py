@@ -1,12 +1,16 @@
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 
 def cargar_paso(id, ti=None):
+    """Función que carga la información obtenida por el paso previo de scrapeo.
+        parámetro id: string que referencia al task anterior de scrapeo.
+        parámetro ti: task instance para utilizar XCom."""
     paso = ti.xcom_pull(task_ids=id)
     print(paso)
     
     hook = MySqlHook(mysql_conn_id='mysql_pasos')
     with hook.get_conn() as conn:
         with conn.cursor() as cursor:
+            # Primero borro para asegurar que el pipeline sea idempotente
             cursor.execute("""
                 DELETE FROM pasos_fronterizos WHERE fecha_scaneo = %s AND paso = %s;""", [paso['fecha_scaneo'], paso['paso']])
             

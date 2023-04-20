@@ -5,14 +5,16 @@ import re
 from airflow.exceptions import AirflowSkipException
 
 def scrape_paso(url, timestamp):
+    """Función que retorna un diccionario con los datos scrapeados de un paso fronterizo.
+        parámetro url: string con url.
+        parámetro timestamp: string con fecha de ejecucíon en formato ISO."""
     timestamp = datetime.fromisoformat(timestamp)
     req = requests.get(url)
     soup = BeautifulSoup(req.text, "html.parser")
 
+    # Cuando el servicio esta caido aparece este div
     if soup.find("div", class_="alert alert-block alert-dismissible alert-danger messages error"):
         print("Servicio de pasos fronterizos momentáneamente no disponbile.")
-        print(url)
-        print(soup.find("div", class_="alert alert-block alert-dismissible alert-danger messages error").text)
         raise AirflowSkipException
 
     paso_info = {}
@@ -23,6 +25,7 @@ def scrape_paso(url, timestamp):
     estado_y_actualizacion = soup.find("div", class_="text-muted m-t-3 lead")
     actualizacion = estado_y_actualizacion.get_text("|", strip=True).split("|")[1]
     
+    # Regex para extraer (mas o menos) el tiempo en dias, horas, minutos y segundos de la ultima actualizacion. No trae meses ni años.
     dias, horas, minutos, segundos = re.search(r"(?:(\d+)\s*(?:dia)s?)?\s(?:(\d+)\s*(?:hora)s?)?\s*(?:(\d+)\s*(?:minuto)s?)?\s*(?:(\d+)\s*(?:segundos)s?)", actualizacion).groups()
     
     dias = int(dias) if dias is not None else 0
@@ -31,6 +34,7 @@ def scrape_paso(url, timestamp):
     segundos = int(segundos) if segundos is not None else 0
 
     paso_info['estado'] = estado_y_actualizacion.find("span").text
+    # Calcula fechas y las convierte en un string de formato año-mes-dia hora:min:seg
     paso_info['ultima_actualizacion'] = (timestamp - timedelta(days=dias, hours=horas, minutes=minutos, seconds=segundos)).strftime("%Y-%m-%d %H:%M:%S")
     paso_info['fecha_scaneo'] = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -51,6 +55,7 @@ def scrape_paso(url, timestamp):
         key = key.lower().replace(" ","_")
         value = p.get_text("|", strip=True).split("|")[1]
         
+        # Si el valor es numerico
         if value[:-2].replace('.','').isdigit():
                 value = float(value[:-2])
         
@@ -64,5 +69,6 @@ def scrape_paso(url, timestamp):
     return paso_info
 
 if __name__ == "__main__":
+    # Solo para ver si funciona correctamente
     print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/17/Puerto-Alvear-Puerto-Itaqui", datetime.now().isoformat()))
     print(scrape_paso("https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor", datetime.now().isoformat()))

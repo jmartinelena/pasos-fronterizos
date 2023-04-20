@@ -8,7 +8,7 @@ from scrape_paso import scrape_paso
 from cargar_paso import cargar_paso
 
 default_args = {
-    'owner': 'Juan Martin Elena',
+    'owner': 'Juan Martín Elena',
     'retries': 5,
     'retry_delay': timedelta(seconds=30)
 }
@@ -59,6 +59,7 @@ with DAG(
     
     timestamp = "{{ ts }}"
     for i in range(len(urls)):
+        # Scrapea y carga la información de cada una de las urls.
         scrapear_paso = PythonOperator(
             task_id=f"scrapeo_paso_{i}",
             python_callable= scrape_paso,
