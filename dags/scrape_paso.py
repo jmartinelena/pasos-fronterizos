@@ -32,6 +32,7 @@ def scrape_paso(url, timestamp):
 
     paso_info['estado'] = estado_y_actualizacion.find("span").text
     paso_info['ultima_actualizacion'] = (timestamp - timedelta(days=dias, hours=horas, minutes=minutos, seconds=segundos)).strftime("%Y-%m-%d %H:%M:%S")
+    paso_info['fecha_scaneo'] = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     media_bodies = soup.find_all("div", class_="media-body")
     
