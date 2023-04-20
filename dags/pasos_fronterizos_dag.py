@@ -54,8 +54,7 @@ with DAG(
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/73/Paso-de-los-Libres-Uruguayana",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/42/Cardenal-Antonio-Samor%C3%A9",
-            "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/82/Puerto-Colon-Puerto-Paysandu",
-            "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/17/Puerto-Alvear-Puerto-Itaqui"]
+            "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/rio/82/Puerto-Colon-Puerto-Paysandu"]
     
     timestamp = "{{ ts }}"
     for i in range(len(urls)):
