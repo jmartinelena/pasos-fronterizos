@@ -37,6 +37,12 @@ with DAG(
             sql = "crear_tabla_fecha.sql"
         )
 
+        crear_tabla_locacion = MySqlOperator(
+            task_id = 'crear_tabla_fecha',
+            mysql_conn_id= 'mysql_pasos',
+            sql = 'crear_tabla_locacion.sql'
+        )
+
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/4/Gualeguaych%C3%BA-Fray-Bentos",
