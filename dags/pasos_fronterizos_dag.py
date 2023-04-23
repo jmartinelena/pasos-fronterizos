@@ -56,7 +56,7 @@ with DAG(
             sql = 'crear_sp_upsert.sql'
         )
         
-        crear_tabla_pasos >> crear_tabla_fecha >> crear_tabla_locacion >> crear_tabla_tipo >> crear_sp_upsert
+        [crear_tabla_pasos, crear_tabla_fecha, crear_tabla_locacion] >> crear_tabla_tipo >> crear_sp_upsert
 
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
