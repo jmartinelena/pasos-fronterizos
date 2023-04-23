@@ -30,28 +30,12 @@ with DAG(
             mysql_conn_id= 'mysql_pasos',
             sql = "crear_tabla_pasos.sql"
         )
-    # creacion_tabla = MySqlOperator(
-    #     task_id = 'creacion_tabla',
-    #     mysql_conn_id = 'mysql_pasos',
-    #     sql = """
-    #         CREATE TABLE IF NOT EXISTS pasos_fronterizos(
-    #             id INT AUTO_INCREMENT PRIMARY KEY,
-    #             paso VARCHAR(100) NOT NULL,
-    #             pais VARCHAR(20) NOT NULL,
-    #             provincia VARCHAR(20) NOT NULL,
-    #             estado VARCHAR(20) NOT NULL,
-    #             tipo VARCHAR(20) NOT NULL,
-    #             fecha_scaneo DATETIME NOT NULL,
-    #             ultima_actualizacion DATETIME NOT NULL,
-    #             temperatura DECIMAL(5,2),
-    #             tiempo VARCHAR(100),
-    #             viento VARCHAR(100),
-    #             visibilidad VARCHAR(100),
-    #             altura_del_rio DECIMAL(5,2),
-    #             alerta_del_rio DECIMAL(5,2),
-    #             evacuacion_del_rio DECIMAL(5,2)
-    #         );"""
-    # )
+
+        crear_tabla_fecha = MySqlOperator(
+            task_id = "crear_tabla_fecha",
+            mysql_conn_id= 'mysql_pasos',
+            sql = "crear_tabla_fecha.sql"
+        )
 
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
@@ -79,4 +63,4 @@ with DAG(
             op_args=[f"scrapeo_paso_{i}"]
         )
 
-        creacion_tabla >> scrapear_paso >> carga_paso
+        preparar_db >> scrapear_paso >> carga_paso
