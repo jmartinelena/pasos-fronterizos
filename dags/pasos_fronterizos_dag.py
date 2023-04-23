@@ -8,6 +8,7 @@ from airflow.providers.mysql.operators.mysql import MySqlOperator
 from scrape_paso import scrape_paso
 from cargar_paso import cargar_paso
 from crear_sp_add_constraint import agregar_fk_pasos
+from crear_sp_upsert import agregar_sp_upsert
 
 default_args = {
     'owner': 'Juan Martín Elena',
@@ -49,18 +50,17 @@ with DAG(
             sql = '/sql/crear_tabla_tipo.sql'
         )
 
-        agregar_fk_pasos = PythonOperator(
+        crear_fk_pasos = PythonOperator(
             task_id = 'agregar_fk_pasos',
             python_callable= agregar_fk_pasos
         )
 
-        crear_sp_upsert = MySqlOperator(
+        crear_sp_upsert = PythonOperator(
             task_id = 'crear_sp_upsert',
-            mysql_conn_id= 'mysql_pasos',
-            sql = '/sql/crear_sp_upsert.sql'
+            python_callable= agregar_sp_upsert
         )
         
-        [crear_tabla_pasos, crear_tabla_fecha, crear_tabla_locacion] >> crear_tabla_tipo >> agregar_fk_pasos >> crear_sp_upsert
+        [crear_tabla_pasos, crear_tabla_fecha, crear_tabla_locacion] >> crear_tabla_tipo >> crear_fk_pasos >> crear_sp_upsert
 
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
