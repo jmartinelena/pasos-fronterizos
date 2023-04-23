@@ -7,6 +7,7 @@ from airflow.providers.mysql.operators.mysql import MySqlOperator
 
 from scrape_paso import scrape_paso
 from cargar_paso import cargar_paso
+from crear_sp_add_constraint import agregar_fk_pasos
 
 default_args = {
     'owner': 'Juan Martín Elena',
@@ -48,10 +49,9 @@ with DAG(
             sql = '/sql/crear_tabla_tipo.sql'
         )
 
-        agregar_fk_pasos = MySqlOperator(
+        agregar_fk_pasos = PythonOperator(
             task_id = 'agregar_fk_pasos',
-            mysql_conn_id= 'mysql_pasos',
-            sql = '/sql/agregar_fk_pasos.sql'
+            python_callable= agregar_fk_pasos
         )
 
         crear_sp_upsert = MySqlOperator(
