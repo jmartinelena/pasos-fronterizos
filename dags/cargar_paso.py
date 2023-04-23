@@ -9,27 +9,15 @@ def cargar_paso(id, ti=None):
     
     hook = MySqlHook(mysql_conn_id='mysql_pasos')
     with hook.get_conn() as conn:
-        with conn.cursor() as cursor:
-            # Primero borro para asegurar que el pipeline sea idempotente
-            cursor.execute("""
-                DELETE FROM pasos_fronterizos WHERE fecha_scaneo = %s AND paso = %s;""", [paso['fecha_scaneo'], paso['paso']])
-            
+        with conn.cursor() as cursor: 
             if paso['tipo_de_paso'] == 'Ruta':
-                cursor.execute("""
-                    INSERT INTO 
-                        pasos_fronterizos(paso, pais, provincia, estado, tipo, fecha_scaneo, ultima_actualizacion, temperatura, tiempo, viento, visibilidad)
-                    VALUES
-                        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""", 
-                        [paso['paso'], paso['pais'], paso['provincia'], paso['estado'], paso['tipo_de_paso'],
-                        paso['fecha_scaneo'], paso['ultima_actualizacion'],
-                        paso['temperatura'], paso['tiempo'], paso['viento'], paso['visibilidad']])
+                cursor.execute("""CALL upsert_data(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NULL, NULL, NULL);""", 
+                               [paso['fecha_scaneo'], paso['ultima_actualizacion'], paso['paso'], paso['pais'], 
+                                paso['provincia'], paso['estado'], paso['tipo_de_paso'], 
+                                paso['temperatura'], paso['tiempo'], paso['viento'], paso['visibilidad']])
             elif paso['tipo_de_paso'] == 'Rio':
-                cursor.execute("""
-                    INSERT INTO 
-                        pasos_fronterizos(paso, pais, provincia, estado, tipo, fecha_scaneo, ultima_actualizacion, altura_del_rio, alerta_del_rio, evacuacion_del_rio)
-                    VALUES
-                        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""", 
-                        [paso['paso'], paso['pais'], paso['provincia'], paso['estado'], paso['tipo_de_paso'],
-                        paso['fecha_scaneo'], paso['ultima_actualizacion'],
-                        paso['altura_del_río'], paso['alerta'], paso['evacuación']])
+                cursor.execute("""CALL upsert_data(%s, %s, %s, %s, %s, %s, %s, NULL, NULL, NULL, NULL, %s, %s, %s);""", 
+                               [paso['fecha_scaneo'], paso['ultima_actualizacion'], paso['paso'], paso['pais'], 
+                                paso['provincia'], paso['estado'], paso['tipo_de_paso'], 
+                                paso['altura_del_río'], paso['alerta'], paso['evacuación']])
         conn.commit()
