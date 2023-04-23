@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
+from airflow.utils.task_group import TaskGroup
 from airflow.operators.python import PythonOperator
 from airflow.providers.mysql.operators.mysql import MySqlOperator
 
@@ -20,30 +21,37 @@ with DAG(
     catchup=False,
     start_date=datetime(2023,4,19),
     schedule='@hourly',
-    render_template_as_native_obj=True
+    render_template_as_native_obj=True,
+    template_searchpath='/sql'
 ) as dag:
-    creacion_tabla = MySqlOperator(
-        task_id = 'creacion_tabla',
-        mysql_conn_id = 'mysql_pasos',
-        sql = """
-            CREATE TABLE IF NOT EXISTS pasos_fronterizos(
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                paso VARCHAR(100) NOT NULL,
-                pais VARCHAR(20) NOT NULL,
-                provincia VARCHAR(20) NOT NULL,
-                estado VARCHAR(20) NOT NULL,
-                tipo VARCHAR(20) NOT NULL,
-                fecha_scaneo DATETIME NOT NULL,
-                ultima_actualizacion DATETIME NOT NULL,
-                temperatura DECIMAL(5,2),
-                tiempo VARCHAR(100),
-                viento VARCHAR(100),
-                visibilidad VARCHAR(100),
-                altura_del_rio DECIMAL(5,2),
-                alerta_del_rio DECIMAL(5,2),
-                evacuacion_del_rio DECIMAL(5,2)
-            );"""
-    )
+    with TaskGroup(group_id='preparar_db') as preparar_db:
+        crear_tabla_pasos = MySqlOperator(
+            task_id = 'crear_tabla_pasos',
+            mysql_conn_id= 'mysql_pasos',
+            sql = "crear_tabla_pasos.sql"
+        )
+    # creacion_tabla = MySqlOperator(
+    #     task_id = 'creacion_tabla',
+    #     mysql_conn_id = 'mysql_pasos',
+    #     sql = """
+    #         CREATE TABLE IF NOT EXISTS pasos_fronterizos(
+    #             id INT AUTO_INCREMENT PRIMARY KEY,
+    #             paso VARCHAR(100) NOT NULL,
+    #             pais VARCHAR(20) NOT NULL,
+    #             provincia VARCHAR(20) NOT NULL,
+    #             estado VARCHAR(20) NOT NULL,
+    #             tipo VARCHAR(20) NOT NULL,
+    #             fecha_scaneo DATETIME NOT NULL,
+    #             ultima_actualizacion DATETIME NOT NULL,
+    #             temperatura DECIMAL(5,2),
+    #             tiempo VARCHAR(100),
+    #             viento VARCHAR(100),
+    #             visibilidad VARCHAR(100),
+    #             altura_del_rio DECIMAL(5,2),
+    #             alerta_del_rio DECIMAL(5,2),
+    #             evacuacion_del_rio DECIMAL(5,2)
+    #         );"""
+    # )
 
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
