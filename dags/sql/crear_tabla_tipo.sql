@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS tipo(
 	tipo_id INT AUTO_INCREMENT PRIMARY KEY,
-    fecha_id INT UNIQUE,
-    locacion_id INT UNIQUE,
+    fecha_id INT,
+    locacion_id INT,
     tipo VARCHAR(20),
     temperatura DECIMAL(5,2),
     tiempo VARCHAR(100),
@@ -11,4 +11,5 @@ CREATE TABLE IF NOT EXISTS tipo(
 	alerta_del_rio DECIMAL(5,2),
 	evacuacion_del_rio DECIMAL(5,2),
     FOREIGN KEY(fecha_id) REFERENCES fecha(fecha_id),
-    FOREIGN KEY(locacion_id) REFERENCES locacion(locacion_id));
+    FOREIGN KEY(locacion_id) REFERENCES locacion(locacion_id),
+    UNIQUE(fecha_id, locacion_id));

@@ -45,7 +45,7 @@ def agregar_sp_upsert():
                                     viento = vientoPaso, visibilidad = visibilidadPaso,
                                     altura_del_rio = alturaRio, alerta_del_rio = alertaRio, evacuacion_del_rio = evacuacionRio;
 
-	                            SELECT tipo_id INTO tipoId FROM tipo WHERE locacion_id = locacionId AND fecha_id = locacionId;
+	                            SELECT tipo_id INTO tipoId FROM tipo WHERE locacion_id = locacionId AND fecha_id = fechaId;
 
 	                            INSERT INTO 
 	                            	pasos(fecha_id, locacion_id, tipo_id, estado)
