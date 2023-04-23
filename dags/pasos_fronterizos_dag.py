@@ -49,6 +49,12 @@ with DAG(
             sql = 'crear_tabla_tipo.sql'
         )
 
+        crear_sp_upsert = MySqlOperator(
+            task_id = 'crear_sp_upsert',
+            mysql_conn_id= 'mysql_pasos',
+            sql = 'crear_sp_upsert.sql'
+        )
+
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/4/Gualeguaych%C3%BA-Fray-Bentos",
