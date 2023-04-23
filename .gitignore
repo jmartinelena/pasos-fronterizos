@@ -25,3 +25,4 @@ pruebas.ipynb
 mysql/*
 logs/*
 plugins/*
+!mysql/init/
