@@ -6,7 +6,7 @@ def agregar_fk_pasos():
         with conn.cursor() as cursor:
             cursor.execute("""DROP PROCEDURE IF EXISTS add_constraint;""")
 
-            cursor.exectute("""
+            cursor.execute("""
                             CREATE PROCEDURE add_constraint()
                             BEGIN
                                 IF NOT EXISTS (
