@@ -12,5 +12,3 @@ CREATE TABLE IF NOT EXISTS tipo(
 	evacuacion_del_rio DECIMAL(5,2),
     FOREIGN KEY(fecha_id) REFERENCES fecha(fecha_id),
     FOREIGN KEY(locacion_id) REFERENCES locacion(locacion_id));
-    
-ALTER TABLE pasos ADD CONSTRAINT FOREIGN KEY(tipo_id) REFERENCES tipo(tipo_id);

@@ -22,41 +22,45 @@ with DAG(
     start_date=datetime(2023,4,19),
     schedule='@hourly',
     render_template_as_native_obj=True,
-    template_searchpath='/sql'
 ) as dag:
     with TaskGroup(group_id='preparar_db') as preparar_db:
         crear_tabla_pasos = MySqlOperator(
             task_id = 'crear_tabla_pasos',
             mysql_conn_id= 'mysql_pasos',
-            sql = "crear_tabla_pasos.sql"
+            sql = "/sql/crear_tabla_pasos.sql"
         )
 
         crear_tabla_fecha = MySqlOperator(
             task_id = "crear_tabla_fecha",
             mysql_conn_id= 'mysql_pasos',
-            sql = "crear_tabla_fecha.sql"
+            sql = "/sql/crear_tabla_fecha.sql"
         )
 
         crear_tabla_locacion = MySqlOperator(
-            task_id = 'crear_tabla_fecha',
+            task_id = 'crear_tabla_locacion',
             mysql_conn_id= 'mysql_pasos',
-            sql = 'crear_tabla_locacion.sql'
+            sql = '/sql/crear_tabla_locacion.sql'
         )
 
         crear_tabla_tipo = MySqlOperator(
             task_id = 'crear_tabla_tipo',
             mysql_conn_id= 'mysql_pasos',
-            sql = 'crear_tabla_tipo.sql'
+            sql = '/sql/crear_tabla_tipo.sql'
         )
 
+        agregar_fk_pasos = MySqlOperator(
+            task_id = 'agregar_fk_pasos',
+            mysql_conn_id= 'mysql_pasos',
+            sql = '/sql/agregar_fk_pasos.sql'
+        )
 
         crear_sp_upsert = MySqlOperator(
             task_id = 'crear_sp_upsert',
             mysql_conn_id= 'mysql_pasos',
-            sql = 'crear_sp_upsert.sql'
+            sql = '/sql/crear_sp_upsert.sql'
         )
         
-        [crear_tabla_pasos, crear_tabla_fecha, crear_tabla_locacion] >> crear_tabla_tipo >> crear_sp_upsert
+        [crear_tabla_pasos, crear_tabla_fecha, crear_tabla_locacion] >> crear_tabla_tipo >> agregar_fk_pasos >> crear_sp_upsert
 
     urls = ["https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/22/Salvador-Mazza-Yacuiba",
             "https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/24/Puerto-Chalanas-Bermejo",
