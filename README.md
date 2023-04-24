@@ -16,7 +16,7 @@ Los pasos fronterizos involucrados son:
 ## Cómo levantar el proyecto
 
 Es necesario tener instalado [Docker](https://docs.docker.com/engine/install/) y [Docker Compose](https://docs.docker.com/compose/install/).  
-1. Crear las carpetas `dags`, `logs` y `plugins` en la carpeta donde se vaya a levantar el proyecto. Mas información para linux: [acá].(https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user) 
+1. Crear las carpetas `dags`, `logs` y `plugins` en la carpeta donde se vaya a levantar el proyecto. Mas información para linux: [acá](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user). 
 2. Ejecutar `docker compose up -d` en la carpeta donde se vaya a levantar el proyecto (y donde esté el archivo docker-compose.yaml). Para supervisar como se van levantando los recursos se puede ejecutar `docker compose logs -f`.
 3. Una vez se hayan creado e inicializado los recursos, se puede acceder a la UI web en localhost:8080 (por defecto) y loggearse con el usuario y contraseña definidos en docker-compose.yaml (por defecto tanto el usuario como la contraseña son "airflow").
 
